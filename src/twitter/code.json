@@ -1,0 +1,74 @@
+{
+    "$connections": {
+        "value": {
+            "servicebus": {
+                "connectionId": "/subscriptions/ee41ddbb-5294-4318-a45b-944738c3f363/resourceGroups/MCSC-ChildFinderBot-dev/providers/Microsoft.Web/connections/servicebus",
+                "connectionName": "servicebus",
+                "id": "/subscriptions/ee41ddbb-5294-4318-a45b-944738c3f363/providers/Microsoft.Web/locations/westus/managedApis/servicebus"
+            },
+            "twitter": {
+                "connectionId": "/subscriptions/ee41ddbb-5294-4318-a45b-944738c3f363/resourceGroups/MCSC-ChildFinderBot-dev/providers/Microsoft.Web/connections/twitter",
+                "connectionName": "twitter",
+                "id": "/subscriptions/ee41ddbb-5294-4318-a45b-944738c3f363/providers/Microsoft.Web/locations/westus/managedApis/twitter"
+            }
+        }
+    },
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Send_message": {
+                "inputs": {
+                    "body": {
+                        "ContentData": "@{base64(json(concat('{\"description\":\"',triggerBody()?['UserDetails']?['Description'],'\",\"location\":\"',triggerBody()?['UserDetails']?['Location'],'\",\"username\":\"',triggerBody()?['UserDetails']?['UserName'],'\",\"fullname\":\"',triggerBody()?['UserDetails']?['FullName'],'\",\"tweettext\":\"',triggerBody()?['TweetText'],'\",\"tweetedby\":\"',triggerBody()?['TweetedBy'],'\",\"userid\":\"',triggerBody()?['UserDetails']?['Id'],'\",\"tweetid\":\"',triggerBody()?['TweetId'],'\",\"profileimageurl\":\"',triggerBody()?['UserDetails']?['ProfileImageUrl'],'\",\"userid\":\"',triggerBody()?['UserDetails']?['Id'],'\",\"social_site\":1}')))}\n",
+                        "ContentType": "application/json"
+                    },
+                    "host": {
+                        "api": {
+                            "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/servicebus"
+                        },
+                        "connection": {
+                            "name": "@parameters('$connections')['servicebus']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/@{encodeURIComponent('tofilter')}/messages"
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_new_tweet_is_posted": {
+                "inputs": {
+                    "host": {
+                        "api": {
+                            "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/twitter"
+                        },
+                        "connection": {
+                            "name": "@parameters('$connections')['twitter']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/onnewtweet",
+                    "queries": {
+                        "searchQuery": "HFMTest"
+                    }
+                },
+                "recurrence": {
+                    "frequency": "Second",
+                    "interval": 30
+                },
+                "splitOn": "@triggerBody()?.value",
+                "type": "ApiConnection"
+            }
+        }
+    }
+}
