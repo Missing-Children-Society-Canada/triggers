@@ -1,2 +1,2 @@
 # Twitter
-LogicApp Trigger
+Twitter Event trigger, by hash tag
