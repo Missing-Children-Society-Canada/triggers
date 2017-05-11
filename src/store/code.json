@@ -1,1 +1,74 @@
-{}
+{
+    "$connections": {
+        "value": {
+            "servicebus": {
+                "connectionId": "/subscriptions/ee41ddbb-5294-4318-a45b-944738c3f363/resourceGroups/MCSC-ChildFinderBot-dev/providers/Microsoft.Web/connections/servicebus-1",
+                "connectionName": "servicebus-1",
+                "id": "/subscriptions/ee41ddbb-5294-4318-a45b-944738c3f363/providers/Microsoft.Web/locations/westus/managedApis/servicebus"
+            },
+            "sql": {
+                "connectionId": "/subscriptions/ee41ddbb-5294-4318-a45b-944738c3f363/resourceGroups/MCSC-ChildFinderBot-dev/providers/Microsoft.Web/connections/sql-1",
+                "connectionName": "sql-1",
+                "id": "/subscriptions/ee41ddbb-5294-4318-a45b-944738c3f363/providers/Microsoft.Web/locations/westus/managedApis/sql"
+            }
+        }
+    },
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Execute_stored_procedure": {
+                "inputs": {
+                    "body": {
+                        "AccountId": "123",
+                        "Content": "@{base64ToString(triggerBody()?['ContentData'])}",
+                        "Identifier": "123"
+                    },
+                    "host": {
+                        "api": {
+                            "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/sql"
+                        },
+                        "connection": {
+                            "name": "@parameters('$connections')['sql']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/datasets/default/procedures/@{encodeURIComponent(encodeURIComponent('[dbo].[StoreSocialInteraction]'))}"
+                },
+                "runAfter": {},
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_message_is_received_in_a_queue_(auto-complete)": {
+                "inputs": {
+                    "host": {
+                        "api": {
+                            "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/servicebus"
+                        },
+                        "connection": {
+                            "name": "@parameters('$connections')['servicebus']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/@{encodeURIComponent('tostore')}/messages/head",
+                    "queries": {
+                        "queueType": "Main"
+                    }
+                },
+                "recurrence": {
+                    "frequency": "Minute",
+                    "interval": 1
+                },
+                "type": "ApiConnection"
+            }
+        }
+    }
+}
