@@ -19,7 +19,7 @@
             "Send_message": {
                 "inputs": {
                     "body": {
-                        "ContentData": "@{base64(json(concat('{\"description\":\"',triggerBody()?['UserDetails']?['Description'],'\",\"location\":\"',triggerBody()?['UserDetails']?['Location'],'\",\"username\":\"',triggerBody()?['UserDetails']?['UserName'],'\",\"fullname\":\"',triggerBody()?['UserDetails']?['FullName'],'\",\"tweettext\":\"',triggerBody()?['TweetText'],'\",\"tweetedby\":\"',triggerBody()?['TweetedBy'],'\",\"userid\":\"',triggerBody()?['UserDetails']?['Id'],'\",\"tweetid\":\"',triggerBody()?['TweetId'],'\",\"profileimageurl\":\"',triggerBody()?['UserDetails']?['ProfileImageUrl'],'\",\"userid\":\"',triggerBody()?['UserDetails']?['Id'],'\",\"social_site\":1}')))}\n",
+                        "ContentData": "@{base64(json(concat('{\"mediaid\":\"',triggerBody()?['TweetId'],'\",\"userid\":\"',triggerBody()?['UserDetails']?['Id'],'\",\"platform\":\"twitter\"}')))}",
                         "ContentType": "application/json"
                     },
                     "host": {
@@ -63,8 +63,8 @@
                     }
                 },
                 "recurrence": {
-                    "frequency": "Second",
-                    "interval": 30
+                    "frequency": "Minute",
+                    "interval": 1
                 },
                 "splitOn": "@triggerBody()?.value",
                 "type": "ApiConnection"
