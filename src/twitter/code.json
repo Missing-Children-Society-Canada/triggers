@@ -19,7 +19,7 @@
             "Send_message": {
                 "inputs": {
                     "body": {
-                        "ContentData": "@{base64(json(concat('{\"mediaid\":\"',triggerBody()?['TweetId'],'\",\"userid\":\"',triggerBody()?['UserDetails']?['Id'],'\",\"platform\":\"twitter\"}')))}",
+                        "ContentData": "@{base64(json(concat('{\"mediaid\":\"',triggerBody()?['TweetId'],'\",\"twitteruserid\":\"',triggerBody()?['UserDetails']?['Id'],'\",\"platform\":\"twitter\"}')))}",
                         "ContentType": "application/json"
                     },
                     "host": {
