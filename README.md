@@ -2,6 +2,3 @@
 
 ## Twitter
 LogicApp
-
-## Facebook
-LogicApp?
